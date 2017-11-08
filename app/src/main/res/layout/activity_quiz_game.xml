@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.hamza.user.notebook.QuizGame">
+
+    <Button
+        android:id="@+id/buttonAnswer1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="207dp"
+        android:onClick="onClick"
+        android:text="Button" />
+
+    <Button
+        android:id="@+id/buttonAnswer2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/buttonAnswer1"
+        android:layout_alignBottom="@+id/buttonAnswer1"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="42dp"
+        android:onClick="onClick"
+        android:text="Button" />
+
+    <Button
+        android:id="@+id/buttonAnswer3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/buttonAnswer1"
+        android:layout_below="@+id/buttonAnswer1"
+        android:layout_marginTop="52dp"
+        android:onClick="onClick"
+        android:text="Button" />
+
+    <Button
+        android:id="@+id/buttonAnswer4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/buttonAnswer2"
+        android:layout_alignTop="@+id/buttonAnswer3"
+        android:onClick="onClick"
+        android:text="Button" />
+
+    <TextView
+        android:id="@+id/textViewQuestion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="85dp"
+        android:textSize="30dp"
+        android:text="TextView" />
+
+    <Button
+        android:id="@+id/buttonNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="70dp"
+        android:onClick="nextButton"
+        android:text="Next" />
+
+    <TextView
+        android:id="@+id/textViewPoints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="37dp"
+        android:textSize="30dp"
+        android:text="TextView" />
+
+</RelativeLayout>
