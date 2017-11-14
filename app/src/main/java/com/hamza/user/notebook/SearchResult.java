@@ -35,12 +35,10 @@ public class SearchResult extends AppCompatActivity {
         listSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mydb.plusS(array_list.get(position).toString());
                 Intent myintent=new Intent(SearchResult.this, ShowWord.class);
                 myintent.putExtra("word", array_list.get(position).toString());
                 myintent.putExtra("traduction", mydb.getTraductionFromWord(array_list.get(position).toString()).toString());
-                pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
-                editor = pref.edit();
-                editor.commit();
                 startActivity(myintent);
             }
         });

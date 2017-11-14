@@ -40,9 +40,11 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/button3"
         android:layout_centerHorizontal="true"
-        android:text="Button" />
+        android:onClick="buttonPron"
+        android:text="Pron" />
 
     <EditText
+        android:onClick="onClickEdit"
         android:id="@+id/textViewEnglish"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,6 +57,7 @@
         android:layout_toStartOf="@+id/textView15" />
 
     <EditText
+        android:onClick="onClickEdit"
         android:id="@+id/textViewFrench"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

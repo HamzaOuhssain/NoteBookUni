@@ -1,11 +1,14 @@
 package com.hamza.user.notebook;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+        import android.speech.tts.TextToSpeech;
+        import android.support.v7.app.AppCompatActivity;
+        import android.os.Bundle;
+        import android.view.View;
+        import android.widget.EditText;
+        import android.widget.TextView;
+        import android.widget.Toast;
+
+        import java.util.Locale;
 
 public class ShowWord extends AppCompatActivity {
     EditText editTextEnglish;
@@ -13,6 +16,7 @@ public class ShowWord extends AppCompatActivity {
     String newStringWord;
     String newStringTraduction;
     public DBHelper mydb;
+    TextToSpeech ttobj;
 
 
     @Override
@@ -55,5 +59,15 @@ public class ShowWord extends AppCompatActivity {
             }
 
         }
+    }
+
+    public void buttonPron(View v){
+        ttobj=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                ttobj.setLanguage(Locale.FRENCH);
+                ttobj.speak(newStringTraduction, TextToSpeech.QUEUE_FLUSH, null);
+            }
+        });
     }
 }

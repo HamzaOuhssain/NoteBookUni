@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CSVFile {
-    File inputStream;
+    File file;
     public DBHelper mydb;
 
     public CSVFile(File inputStream){
-        this.inputStream = inputStream;
+        this.file = inputStream;
 
     }
 
@@ -97,16 +97,28 @@ public class CSVFile {
     public void read(Context b) throws FileNotFoundException {
         mydb = new DBHelper(b);
         List resultList = new ArrayList();
-        BufferedReader reader = new BufferedReader(new FileReader(inputStream));
+        BufferedReader reader = null;
+
         try {
+            reader = new BufferedReader(new FileReader(file));
+            StringBuilder builder = new StringBuilder();
             String csvLine;
+
             while ((csvLine = reader.readLine()) != null) {
+                csvLine = csvLine.replace("\"", "");
                 String[] row = csvLine.split(",");
                 mydb.insertWord(row[0], row[1]);
+                builder.append(csvLine);
             }
         }
         catch (IOException ex) {
             throw new RuntimeException("Error in reading CSV file: "+ex);
+        }finally {
+            try {
+                reader.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
         }
 
     }

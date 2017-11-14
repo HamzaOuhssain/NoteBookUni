@@ -2,9 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal">
 
     <TextView
+
         android:padding="8dp"
         android:id="@+id/textViewWord"
         android:layout_weight="1"
@@ -13,10 +15,19 @@
         android:text="TextViewWord" />
 
     <TextView
+
         android:padding="8dp"
         android:id="@+id/textViewTraduzione"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="" />
+
+    <Button
+        android:onClick="buttonSpeak"
+        android:layout_weight="1.4"
+        android:id="@+id/buttonSp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pron" />
 </LinearLayout>

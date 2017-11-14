@@ -1,26 +1,35 @@
 package com.hamza.user.notebook;
 
 import android.content.Intent;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Locale;
+
 
 public class ShowNoteBook extends AppCompatActivity {
+    TextToSpeech ttobj;
     public DBHelper mydb;
     private ListView obj;
     private ListView lettersListView;
     private ArrayAdapter arrayAdapter;
     private ArrayAdapter arrayAdapterLettera;
     public int pos = 0;
+    String [] arrayMenu = {"delete", "modify"};
     int i = 0;
     ArrayList array_list;
     ArrayList array_listTrad;
@@ -31,16 +40,18 @@ public class ShowNoteBook extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_note_book);
         obj = (ListView) findViewById(R.id.listView1);
+
         lettersListView = (ListView) findViewById(R.id.listViewLetters);
         mydb = new DBHelper(this);
         arrayAdapterLettera = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayLetters);
         lettersListView.setAdapter(arrayAdapterLettera);
         array_list = mydb.getAllWords("word");
         array_listTrad = mydb.getAllWords("traduction");
+        registerForContextMenu(obj);
+
         setView();
 
-
-        obj.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+       /* obj.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 mydb.deleteWord(array_list.get(position).toString());
@@ -54,8 +65,8 @@ public class ShowNoteBook extends AppCompatActivity {
                 setView();
                 return false;
             }
-        });
-        obj.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        });*/
+    /*    obj.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent myintent=new Intent(ShowNoteBook.this, ShowWord.class);
@@ -63,7 +74,7 @@ public class ShowNoteBook extends AppCompatActivity {
                 myintent.putExtra("traduction", array_listTrad.get(position).toString());
                 startActivity(myintent);
             }
-        });
+        });*/
 
         lettersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -73,6 +84,43 @@ public class ShowNoteBook extends AppCompatActivity {
             }
         });
 
+    }
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        if (v.getId()==R.id.listView1) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+            menu.setHeaderTitle(array_list.get(info.position).toString());
+            for (int i = 0; i<arrayMenu.length; i++) {
+                menu.add(Menu.NONE, i, i, arrayMenu[i]);
+            }
+        }
+    }
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        int menuItemIndex = item.getItemId();
+        String menuItemName = arrayMenu[menuItemIndex];
+        if(menuItemName.equalsIgnoreCase("delete")){
+            mydb.deleteWord(array_list.get(info.position).toString());
+            if (pos == 0) {
+                array_list = mydb.getAllWords("word");
+                array_listTrad = mydb.getAllWords("traduction");
+            } else {
+                array_list = mydb.getWordsbyLetter(arrayLetters[pos], "word");
+                array_listTrad = mydb.getWordsbyLetter(arrayLetters[pos], "traduction");
+            }
+            setView();
+        }
+        else{
+            Intent myintent=new Intent(ShowNoteBook.this, ShowWord.class);
+            myintent.putExtra("word", array_list.get(info.position).toString());
+            myintent.putExtra("traduction", array_listTrad.get(info.position).toString());
+            startActivity(myintent);
+        }
+
+
+        return true;
     }
 
     public class MyListAdapterWord extends ArrayAdapter<String> {
@@ -88,6 +136,7 @@ public class ShowNoteBook extends AppCompatActivity {
             }
             TextView textViewWord = (TextView) viewListWords.findViewById(R.id.textViewWord);
             TextView textViewTraduction = (TextView) viewListWords.findViewById(R.id.textViewTraduzione);
+            Button buttonSp = (Button) viewListWords.findViewById(R.id.buttonSp);
             textViewWord.setText(array_list.get(position).toString());
             textViewTraduction.setText(array_listTrad.get(position).toString());
             if (position % 2 == 1) {
@@ -95,6 +144,19 @@ public class ShowNoteBook extends AppCompatActivity {
             } else {
                 viewListWords.setBackgroundColor(getColor(R.color.colorSecondRow));
             }
+            buttonSp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ttobj=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                        @Override
+                        public void onInit(int status) {
+                            ttobj.setLanguage(Locale.FRENCH);
+                            ttobj.speak(array_listTrad.get(position).toString(), TextToSpeech.QUEUE_FLUSH, null);
+                        }
+                    });
+                }
+            });
+
 
             return viewListWords;
 
@@ -102,23 +164,11 @@ public class ShowNoteBook extends AppCompatActivity {
     }
 
 
-    public void addWord(View view){
-        EditText editTextWord = (EditText) findViewById(R.id.plain_text_inputWord);
-        EditText editTextTraduction = (EditText) findViewById(R.id.plain_text_inputTraduction);
 
-        String contentWord = editTextWord.getText().toString();
-        String contentTraduction = editTextTraduction.getText().toString();
-        if(!contentWord.matches("") && !contentTraduction.matches("")) {
-            if (mydb.insertWord(contentWord, contentTraduction)) {
-                Toast.makeText(getApplicationContext(), "Updated", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "not Updated", Toast.LENGTH_SHORT).show();
-            }
-            setView();
-            editTextTraduction.getText().clear();
-            editTextWord.getText().clear();
-        }
-    }
+
+
+
+
     public void setView(){
         if(pos >0){
             array_list = mydb.getWordsbyLetter(arrayLetters[pos],"word");

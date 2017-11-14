@@ -15,6 +15,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String NOTEBOOK_TABLE_NAME = "notebook";
     public static final String NOTEBOOK_COLUMN_WORD = "word";
     public static final String NOTEBOOK_COLUMN_TRADUCTION = "traduction";
+    public static final String NOTEBOOK_COLUMN_TOTR = "totr";
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME , null, 1);
@@ -27,7 +28,7 @@ public class DBHelper extends SQLiteOpenHelper {
         // TODO Auto-generated method stub
         db.execSQL(
                 "create table notebook "+
-                        "(word text primary key,traduction text)"
+                        "(word text primary key,traduction text, totr number)"
         );
     }
     //DROP table if already exists
@@ -46,6 +47,7 @@ public class DBHelper extends SQLiteOpenHelper {
             ContentValues contentValues = new ContentValues();
             contentValues.put(NOTEBOOK_COLUMN_WORD, name);
             contentValues.put(NOTEBOOK_COLUMN_TRADUCTION, traduction);
+            contentValues.put(NOTEBOOK_COLUMN_TOTR, 0);
             db.insert("notebook", null, contentValues);
             return true;
         }
@@ -67,12 +69,32 @@ public class DBHelper extends SQLiteOpenHelper {
         return numRows;
     }
 
+    public void plusS(String word){
+        SQLiteDatabase db = this.getReadableDatabase();
+        int a = getNumRWord(word) +1;
+        db.execSQL( "UPDATE " + NOTEBOOK_TABLE_NAME + " SET " + NOTEBOOK_COLUMN_TOTR + "="+a+" WHERE " +  NOTEBOOK_COLUMN_WORD + " like '"+word+"'");
+    }
+
+    public ArrayList getStory(){
+        ArrayList<String> array_list = new ArrayList<String>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from notebook WHERE totr > 0 ORDER BY totr DESC", null );
+        res.moveToFirst();
+        while(res.isAfterLast() == false){
+            array_list.add(res.getString(res.getColumnIndex("word")));
+            res.moveToNext();
+        }
+        return array_list;
+    }
+
     //Update a word and its traduction
     public boolean updateContat (String word, String traduction, String lastWord) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(NOTEBOOK_COLUMN_WORD, word);
         contentValues.put(NOTEBOOK_COLUMN_TRADUCTION, traduction);
+        int a = getNumRWord(word) +1;
+        contentValues.put(NOTEBOOK_COLUMN_TOTR, a);
         deleteWord(lastWord);
         return insertWord(word, traduction);
 
@@ -129,6 +151,12 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res =  db.rawQuery( "select * from notebook where word like '"+a+"' ORDER BY word", null);
         res.moveToFirst();
         return res.getString(res.getColumnIndex("traduction"));
+    }
+    public int getNumRWord(String a){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from notebook where word like '"+a+"' ORDER BY word", null);
+        res.moveToFirst();
+        return res.getInt(res.getColumnIndex(NOTEBOOK_COLUMN_TOTR));
     }
     //Check is the Word is already in the DataBase
     public boolean Exists(String _id) {
