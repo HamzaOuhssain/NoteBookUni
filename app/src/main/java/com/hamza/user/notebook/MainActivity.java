@@ -5,7 +5,6 @@
 // /
 
 package com.hamza.user.notebook;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
         if (!(array_list.size() == 0)) {
             if (array_list.size() > 4) {
                 array_listShow.subList(4, array_listShow.size()).clear();
-
             }
             ArrayAdapter arrayAdapterLettera;
             arrayAdapterLettera = new ArrayAdapter(this, android.R.layout.simple_list_item_1, array_listShow);
@@ -128,15 +127,16 @@ public class MainActivity extends AppCompatActivity {
 
     //Button Move to Import CSV
     public void importFile() throws FileNotFoundException {
-        File directory = Environment.getExternalStorageDirectory();
-        File file = new File(directory + "/download/notebook.csv");
-        if (!file.exists()) {
-            throw new RuntimeException("File not found");
-        }
-        Log.e("Testing", "Startiing to Read");
-        CSVFile csvFile = new CSVFile(file);
-        csvFile.read(this);
-        Toast.makeText(getApplicationContext(), "IMPORTED", Toast.LENGTH_SHORT).show();
+
+                File directory = Environment.getExternalStorageDirectory();
+                File file = new File(directory + "/download/notebook.csv");
+                if (!file.exists()) {
+                    throw new RuntimeException("File not found");
+                }
+                Log.e("Testing", "Startiing to Read");
+                CSVFile csvFile = new CSVFile(file);
+                csvFile.read(this);
+                Toast.makeText(getApplicationContext(), "IMPORTED", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -157,11 +157,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void buttonExp() throws IOException {
-        File directory = Environment.getExternalStorageDirectory();
-        File file = new File(directory + "/download/notebook.csv");
-        CSVFile csvFile = new CSVFile(file);
-        csvFile.export(this);
-        Toast.makeText(getApplicationContext(), "EXPORTED", Toast.LENGTH_SHORT).show();
+            File directory = Environment.getExternalStorageDirectory();
+            File file = new File(directory + "/download/notebook.csv");
+            CSVFile csvFile = new CSVFile(file);
+            csvFile.export(this);
+            Toast.makeText(getApplicationContext(), "EXPORTED", Toast.LENGTH_SHORT).show();
     }
 
     public void addWord(){

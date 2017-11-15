@@ -113,15 +113,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     //Update a word and its traduction
     boolean updateContat (String word, String traduction, String lastWord) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(NOTEBOOK_COLUMN_WORD, word);
-        contentValues.put(NOTEBOOK_COLUMN_TRADUCTION, traduction);
         int a = getNumRWord(lastWord);
-        contentValues.put(NOTEBOOK_COLUMN_TOTR, a);
         deleteWord(lastWord);
         return insertWord(word, traduction, a);
-
-
     }
 
     // Delete Determinate Word

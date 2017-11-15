@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +33,6 @@ public class QuizGame extends AppCompatActivity {
     private TextView textViewPoints;
     public DBHelper mydb;
     private int numRound = 1;
-    private int numPoints = 0;
     private List<String> answers;
     private ArrayList<String> arrayWords;
     private  ArrayList<String> arrayAnswers;
@@ -115,9 +115,6 @@ public class QuizGame extends AppCompatActivity {
             finishGame();
         else {
             buttonNext.setVisibility(View.VISIBLE);
-            if (a)
-                numPoints++;
-
         }
 
     }

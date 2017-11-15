@@ -11,9 +11,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.List;
 
- class CSVFile {
+class CSVFile {
     private File file;
     private DBHelper mydb;
 

@@ -1,3 +1,9 @@
+//
+// Show the result of the quiz with error and correct answers
+//
+//
+// /
+
 package com.hamza.user.notebook;
 
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 
 public class ShowResultQuiz extends AppCompatActivity {
@@ -29,6 +36,8 @@ public class ShowResultQuiz extends AppCompatActivity {
         obj.setAdapter(arrayAdapter);
     }
 
+
+    //Show the result in a view, green if the answer was correct, red if wasn't
     private class MyListAdapterWordResult extends ArrayAdapter<String> {
         public MyListAdapterWordResult(ArrayList<String> arrayAdapter) {
             super(ShowResultQuiz.this, R.layout.view_list_res_quiz, arrayAdapter);

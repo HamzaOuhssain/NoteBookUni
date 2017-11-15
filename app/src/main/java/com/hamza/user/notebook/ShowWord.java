@@ -18,7 +18,6 @@ package com.hamza.user.notebook;
         import android.os.Bundle;
         import android.view.View;
         import android.widget.EditText;
-        import android.widget.TextView;
         import android.widget.Toast;
 
         import java.util.Locale;
@@ -68,6 +67,7 @@ public class ShowWord extends AppCompatActivity {
         if(!contentWord.matches("") && !contentTraduction.matches("")) {
             if (mydb.updateContat(contentWord, contentTraduction, newStringWord)) {
                 Toast.makeText(getApplicationContext(), "Updated", Toast.LENGTH_SHORT).show();
+                newStringWord = contentWord;
             } else {
                 Toast.makeText(getApplicationContext(), "not Updated", Toast.LENGTH_SHORT).show();
             }
