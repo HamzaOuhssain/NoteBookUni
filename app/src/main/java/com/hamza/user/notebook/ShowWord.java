@@ -1,5 +1,18 @@
+///
+///
+/// TESTING DATABASE
+/// INSERT WORD
+/// UPLOAD
+/// NUMBER ROW
+/// EXISTING
+///
+/// /
+
+
+
 package com.hamza.user.notebook;
 
+        import android.os.Build;
         import android.speech.tts.TextToSpeech;
         import android.support.v7.app.AppCompatActivity;
         import android.os.Bundle;
@@ -48,6 +61,7 @@ public class ShowWord extends AppCompatActivity {
         editTextFrench.setText(newStringTraduction);
     }
 
+    //Button for upload the word or the traduction
     public void uploadButton(View view){
         String contentWord = editTextEnglish.getText().toString();
         String contentTraduction = editTextFrench.getText().toString();
@@ -59,14 +73,22 @@ public class ShowWord extends AppCompatActivity {
             }
 
         }
+        else
+            Toast.makeText(getApplicationContext(), "Text empty!", Toast.LENGTH_SHORT).show();
     }
 
+
+    //Button pronunciation
     public void buttonPron(View v){
         ttobj=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 ttobj.setLanguage(Locale.FRENCH);
-                ttobj.speak(newStringTraduction, TextToSpeech.QUEUE_FLUSH, null);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ttobj.speak(newStringTraduction,TextToSpeech.QUEUE_FLUSH,null,null);
+                } else {
+                    ttobj.speak(newStringTraduction, TextToSpeech.QUEUE_FLUSH, null);
+                }
             }
         });
     }

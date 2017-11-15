@@ -1,17 +1,19 @@
+//
+// Main Activity, Lunch Acivity
+// Showing buttons for import, export, search and add new word
+// Showing listview with the the 4 word more searched
+// /
+
 package com.hamza.user.notebook;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -22,19 +24,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.opencsv.CSVWriter;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.VIBRATE,
             Manifest.permission.RECORD_AUDIO,
     };
-    PrintWriter printWriter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,28 +87,47 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //Button Move from MainActivity to Notebook!
-    public void moveNoteBook(View view) {
-        Intent myintent = new Intent(MainActivity.this, ShowNoteBook.class);
-        startActivity(myintent);
-    }
 
-    //Button Move from MainActivity to QUIZ!
-    public void buttonQuiz(View view) {
-        Intent myintent = new Intent(MainActivity.this, QuizGame.class);
-        startActivity(myintent);
-    }
+    public void buttonMain(View v) throws IOException {
+        Intent myintent;
+        switch (v.getId()){
+            case R.id.buttonNote:
+                myintent= new Intent(MainActivity.this, ShowNoteBook.class);
+                startActivity(myintent);
+                break;
 
-    public void buttonSearch(View view) {
-        EditText editSearch = (EditText) findViewById(R.id.editTextSearch);
-        Intent myintent = new Intent(MainActivity.this, SearchResult.class);
-        myintent.putExtra("search", editSearch.getText().toString());
-        startActivity(myintent);
-    }
+            case R.id.buttonQuiz:
+                if(mydb.numberOfRows()> 10){
+                    myintent = new Intent(MainActivity.this, QuizGame.class);
+                    startActivity(myintent);
+                }
+                else
+                    Toast.makeText(getApplicationContext(), "At Least 10 words", Toast.LENGTH_SHORT).show();
+                break;
 
+            case R.id.buttonExport :
+                buttonExp();
+                break;
+
+            case R.id.buttonImport:
+                importFile();
+                break;
+
+            case R.id.buttonsEARCH:
+                EditText editSearch = (EditText) findViewById(R.id.editTextSearch);
+                myintent = new Intent(MainActivity.this, SearchResult.class);
+                myintent.putExtra("search", editSearch.getText().toString().replace("'","''"));
+                startActivity(myintent);
+                break;
+
+            case R.id.buttonAddWord:
+                addWord();
+                break;
+        }
+    }
 
     //Button Move to Import CSV
-    public void buttonImport(View view) throws FileNotFoundException {
+    public void importFile() throws FileNotFoundException {
         File directory = Environment.getExternalStorageDirectory();
         File file = new File(directory + "/download/notebook.csv");
         if (!file.exists()) {
@@ -146,94 +156,21 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public boolean buttonExport(View v) throws IOException {
-        mydb = new DBHelper(this);
-        String state = Environment.getExternalStorageState();
-        if (!Environment.MEDIA_MOUNTED.equals(state)) {
-            return false;
-        } else {
-            File exportDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            if (!exportDir.exists()) {
-                exportDir.mkdirs();
-            }
-            File file;
-            PrintWriter printWriter = null;
-            try {
-                file = new File(exportDir, "notebookdatabase.csv");
-                printWriter = new PrintWriter(new FileWriter(file));
-                printWriter.println("ORIGINAL WORD,TRANSLATED WORD");
-                ArrayList<String> words = mydb.getAllWords("word");
-                ArrayList<String> traductions = mydb.getAllWords("traduction");
-                int i = 0;
-                for (String b : words) {
-                    String data[] = {b.toString(), traductions.get(i).toString()};
-                    printWriter.println(data[0]+","+data[1]);
-                    i++;
-                }
-
-            } catch (Exception exc) {
-                debug(exc.toString());
-                return false;
-            } finally {
-                if (printWriter != null)
-                    printWriter.close();
-                MediaScannerConnection.scanFile(MainActivity.this, new String[] { "notebookdatabase.csv" }, null, null);
-            }
-            return true;
-        }
+    public void buttonExp() throws IOException {
+        File directory = Environment.getExternalStorageDirectory();
+        File file = new File(directory + "/download/notebook.csv");
+        CSVFile csvFile = new CSVFile(file);
+        csvFile.export(this);
+        Toast.makeText(getApplicationContext(), "EXPORTED", Toast.LENGTH_SHORT).show();
     }
 
-
-    public void debug(Object obj){
-        Log.d("DEBUG", obj.toString());
-    }
-
-/*
-*       String state = Environment.getExternalStorageState();
-        if (!Environment.MEDIA_MOUNTED.equals(state)) {
-            return false;
-        } else {
-            File exportDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            if (!exportDir.exists()) {
-                exportDir.mkdirs();
-            }
-            File file;
-            PrintWriter printWriter = null;
-            try {
-                file = new File(exportDir, "NotebookDatabase.csv");
-                printWriter = new PrintWriter(new FileWriter(file));
-                printWriter.println("ORIGINAL WORD,TRANSLATED WORD");
-                if (cursor.getCount() < 1)
-                        return false;
-                ArrayList<String> words =  mydb.getAllWords("word");
-                ArrayList<String> traductions =  mydb.getAllWords("traduction");
-                int i=0;
-                for(String b: words){
-                String data[] = {words.get(i).toString(), traductions.get(i).toString()};
-                printWriter.println(record);
-                i++;
-            }
-
-                }
-            } catch (Exception exc) {
-                debug(exc.toString());
-                return false;
-            } finally {
-                if (printWriter != null) printWriter.close();
-            }
-            return true;
-        }
-
-* */
-        //CSVFile csvFile = new CSVFile(inputStream);
-        //csvFile.export();
-    public void addWord(View view){
+    public void addWord(){
         mydb = new DBHelper(this);
 
         String contentWord = editTextWord.getText().toString();
         String contentTraduction = editTextTraduction.getText().toString();
         if(!contentWord.matches("") && !contentTraduction.matches("")) {
-            if (mydb.insertWord(contentWord, contentTraduction)) {
+            if (mydb.insertWord(contentWord, contentTraduction, 0)) {
                 Toast.makeText(getApplicationContext(), "Updated", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), "not Updated", Toast.LENGTH_SHORT).show();
@@ -241,28 +178,9 @@ public class MainActivity extends AppCompatActivity {
             editTextTraduction.getText().clear();
             editTextWord.getText().clear();
         }
+        else
+        Toast.makeText(getApplicationContext(), "Empty text", Toast.LENGTH_SHORT).show();
     }
-  /*  public void translateButton(View v){
-        // TODO Auto-generated method stub
-        String InputString;
-        String OutputString = null;
-        InputString = editTextWord.getText().toString();
-
-        try {
-            Transl.setHttpReferrer("http://android-er.blogspot.com/");
-            OutputString = Translate.execute(InputString,
-                    Language.ENGLISH, Language.FRENCH);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            OutputString = "Error";
-        }
-
-        MyOutputText.setText(OutputString);
-
-    }
-
-}*/
-
 
     @Override
     protected void onPostResume() {

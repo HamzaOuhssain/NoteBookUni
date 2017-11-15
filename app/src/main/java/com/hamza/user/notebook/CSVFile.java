@@ -1,102 +1,69 @@
 package com.hamza.user.notebook;
 
 import android.content.Context;
-
-import com.opencsv.CSVWriter;
-
+import android.os.Environment;
+import android.util.Log;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CSVFile {
-    File file;
-    public DBHelper mydb;
+ class CSVFile {
+    private File file;
+    private DBHelper mydb;
 
-    public CSVFile(File inputStream){
+     CSVFile(File inputStream){
         this.file = inputStream;
 
     }
 
-    public void export() throws IOException {
-        /*
-        String baseDir = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
-        String fileName = "AnalysisData.csv";
-        String filePath = baseDir + File.separator + fileName;
-        File f = new File(filePath );
-        FileWriter mFileWriter;
-        CSVWriter writer;
-// File exist
-        if(f.exists() && !f.isDirectory()){
-            mFileWriter = new FileWriter(filePath , true);
-            writer = new CSVWriter(mFileWriter);
-        }
-        else {
-            writer = new CSVWriter(new FileWriter(filePath));
-        }
-        ArrayList<String> words =  mydb.getAllWords("word");
-        ArrayList<String> traductions =  mydb.getAllWords("traduction");
-        String[] data = new String[traductions.size()];
-        int i=0;
-        for(String b: words){
-            data[i] = b+","+traductions.get(i);
-            i++;
+     boolean export(Context cont) throws IOException {
+        mydb = new DBHelper(cont);
+        String state = Environment.getExternalStorageState();
+        if (!Environment.MEDIA_MOUNTED.equals(state)) {
+            return false;
+        } else {
+            File exportDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            if (!exportDir.exists()) {
+                exportDir.mkdirs();
+            }
+            File file;
+            PrintWriter printWriter = null;
+            try {
+                file = new File(exportDir, "notebookexport.csv");
+                printWriter = new PrintWriter(new FileWriter(file));
+                printWriter.println("ENGLISH WORD,FRENCH WORD");
+                ArrayList<String> words = mydb.getAllWords("word");
+                ArrayList<String> traductions = mydb.getAllWords("traduction");
+                int i = 0;
+                for (String b : words) {
+                    String data[] = {b, traductions.get(i)};
+                    printWriter.println(data[0]+","+data[1]);
+                    i++;
+                }
+
+            } catch (Exception exc) {
+                debug(exc.toString());
+                return false;
+            } finally {
+                if (printWriter != null){
+                    printWriter.close();
+                }
+            }
+            return true;
         }
 
-
-        writer.writeNext(data);
-
-        writer.close();
-        File root = android.os.Environment.getExternalStorageDirectory();
-        File dir = new File (root.getAbsolutePath() + "/");
-        dir.mkdirs();
-        File file = new File(dir, "filename.txt");
-
-
-        try {
-            FileOutputStream f = new FileOutputStream(file);
-            PrintWriter pw = new PrintWriter(f);
-            pw.println(data); //your string which you want to store
-            pw.flush();
-            pw.close();
-            f.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-        ArrayList<String> words =  mydb.getAllWords("word");
-        ArrayList<String> traductions =  mydb.getAllWords("traduction");
-        String[] data = new String[traductions.size()];
-        int i=0;
-        for(String b: words){
-            data[i] = b+","+traductions.get(i);
-            i++;
-        }
-        try
-        {
-            FileWriter fw = new FileWriter("test.txt");
-            BufferedWriter out = new BufferedWriter(fw);
-            out.write("aString");
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
     }
-
-    public void read(Context b) throws FileNotFoundException {
+     void debug(Object obj){
+        Log.d("DEBUG", obj.toString());
+    }
+     void read(Context b) throws FileNotFoundException {
         mydb = new DBHelper(b);
-        List resultList = new ArrayList();
         BufferedReader reader = null;
 
         try {
@@ -107,7 +74,7 @@ public class CSVFile {
             while ((csvLine = reader.readLine()) != null) {
                 csvLine = csvLine.replace("\"", "");
                 String[] row = csvLine.split(",");
-                mydb.insertWord(row[0], row[1]);
+                mydb.insertWord(row[0], row[1], 0);
                 builder.append(csvLine);
             }
         }

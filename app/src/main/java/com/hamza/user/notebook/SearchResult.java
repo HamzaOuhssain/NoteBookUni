@@ -1,7 +1,11 @@
+//
+// Result of the Search did in the MainActivity
+// Possibility to click in a row of the listview and change to the next activity ShowWord.class
+// /
+
 package com.hamza.user.notebook;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,8 +20,6 @@ public class SearchResult extends AppCompatActivity {
     private ArrayAdapter arrayAdapter;
     public DBHelper mydb;
     ArrayList array_list;
-    private SharedPreferences.Editor editor;
-    private SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +33,7 @@ public class SearchResult extends AppCompatActivity {
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,array_list );
         listSearch.setAdapter(arrayAdapter);
 
-
+        //ListView Results of the Search... creating intent to move to the next activty
         listSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

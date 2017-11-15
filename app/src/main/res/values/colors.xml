@@ -8,4 +8,7 @@
     <color name="colorGreen">#00FF00</color>
     <color name="colorRed">#FF0000</color>
     <color name="colorInitial">#CCFFFF</color>
+    <color name="colorLightGreen">#aaff80</color>
+    <color name="colorLightRed">#ff4d4d</color>
+    <color name="colorGrey">#c2c2a3</color>
 </resources>

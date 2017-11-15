@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hamza.user.notebook">
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -28,10 +29,8 @@
             android:name=".QuizGame"
             android:label="@string/title_activity_quiz_game"
             android:theme="@style/AppTheme.NoActionBar" />
-
-
-
-        <activity android:name=".SearchResult"></activity>
+        <activity android:name=".SearchResult" />
+        <activity android:name=".ShowResultQuiz"></activity>
     </application>
 
 </manifest>
